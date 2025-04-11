@@ -12,9 +12,3 @@ type User struct {
 	Age  int    `json:"age"`
 	Sex  string `json:"sex"`
 }
-
-type UpdateUserInput struct {
-	Name *string `json:"name"`
-	Age  *int    `json:"age"`
-	Sex  *string `json:"sex"`
-}

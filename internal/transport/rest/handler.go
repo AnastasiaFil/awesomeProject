@@ -2,7 +2,6 @@ package rest
 
 import (
 	"awasomeProject/internal/domain"
-	"context"
 	"encoding/json"
 	"errors"
 	"github.com/gorilla/mux"
@@ -14,11 +13,11 @@ import (
 )
 
 type Users interface {
-	Create(ctx context.Context, user domain.User) error
-	GetByID(ctx context.Context, id int64) (domain.User, error)
-	GetAll(ctx context.Context) ([]domain.User, error)
-	Delete(ctx context.Context, id int64) error
-	Update(ctx context.Context, id int64, inp domain.UpdateUserInput) error
+	Create(user domain.User) error
+	GetByID(id int64) (domain.User, error)
+	GetAll() ([]domain.User, error)
+	Delete(id int64) error
+	Update(id int64, inp domain.User) error
 }
 
 type Handler struct {
@@ -55,7 +54,7 @@ func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.usersService.GetByID(context.TODO(), id)
+	user, err := h.usersService.GetByID(id)
 	if err != nil {
 		if errors.Is(err, domain.ErrUserNotFound) {
 			w.WriteHeader(http.StatusBadRequest)
@@ -91,7 +90,7 @@ func (h *Handler) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.usersService.Create(context.TODO(), user)
+	err = h.usersService.Create(user)
 	if err != nil {
 		log.Println("createUser() error:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -109,7 +108,7 @@ func (h *Handler) deleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.usersService.Delete(context.TODO(), id)
+	err = h.usersService.Delete(id)
 	if err != nil {
 		log.Println("deleteUser() error:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -120,7 +119,7 @@ func (h *Handler) deleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := h.usersService.GetAll(context.TODO())
+	users, err := h.usersService.GetAll()
 	if err != nil {
 		log.Println("getAllUsers() error:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -152,13 +151,13 @@ func (h *Handler) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var inp domain.UpdateUserInput
+	var inp domain.User
 	if err = json.Unmarshal(reqBytes, &inp); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	err = h.usersService.Update(context.TODO(), id, inp)
+	err = h.usersService.Update(id, inp)
 	if err != nil {
 		log.Println("error:", err)
 		w.WriteHeader(http.StatusInternalServerError)

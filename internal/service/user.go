@@ -2,15 +2,14 @@ package service
 
 import (
 	"awasomeProject/internal/domain"
-	"context"
 )
 
 type UsersRepository interface {
-	Create(ctx context.Context, user domain.User) error
-	GetByID(ctx context.Context, id int64) (domain.User, error)
-	GetAll(ctx context.Context) ([]domain.User, error)
-	Delete(ctx context.Context, id int64) error
-	Update(ctx context.Context, id int64, inp domain.UpdateUserInput) error
+	Create(user domain.User) error
+	GetByID(id int64) (domain.User, error)
+	GetAll() ([]domain.User, error)
+	Delete(id int64) error
+	Update(id int64, inp domain.User) error
 }
 
 type Users struct {
@@ -23,22 +22,22 @@ func NewUsers(repo UsersRepository) *Users {
 	}
 }
 
-func (b *Users) Create(ctx context.Context, user domain.User) error {
-	return b.repo.Create(ctx, user)
+func (b *Users) Create(user domain.User) error {
+	return b.repo.Create(user)
 }
 
-func (b *Users) GetByID(ctx context.Context, id int64) (domain.User, error) {
-	return b.repo.GetByID(ctx, id)
+func (b *Users) GetByID(id int64) (domain.User, error) {
+	return b.repo.GetByID(id)
 }
 
-func (b *Users) GetAll(ctx context.Context) ([]domain.User, error) {
-	return b.repo.GetAll(ctx)
+func (b *Users) GetAll() ([]domain.User, error) {
+	return b.repo.GetAll()
 }
 
-func (b *Users) Delete(ctx context.Context, id int64) error {
-	return b.repo.Delete(ctx, id)
+func (b *Users) Delete(id int64) error {
+	return b.repo.Delete(id)
 }
 
-func (b *Users) Update(ctx context.Context, id int64, inp domain.UpdateUserInput) error {
-	return b.repo.Update(ctx, id, inp)
+func (b *Users) Update(id int64, inp domain.User) error {
+	return b.repo.Update(id, inp)
 }
