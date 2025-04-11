@@ -1,7 +1,11 @@
 CRUD Приложение
+
 Стэк
+
 go 1.22.1
+
 postgres
+
 
 
 Для postgres можно использовать Docker
