@@ -1,10 +1,10 @@
 package main
 
 import (
+	"awasomeProject/internal/domain"
 	"awasomeProject/internal/repository/psql"
 	"awasomeProject/internal/service"
 	"awasomeProject/internal/transport/rest"
-	"awasomeProject/pkg/database"
 	"context"
 	_ "github.com/lib/pq"
 	"log"
@@ -17,7 +17,7 @@ import (
 
 func main() {
 	// init db
-	db, err := database.NewPostgresConnection(database.ConnectionInfo{
+	db, err := domain.NewPostgresConnection(domain.ConnectionInfo{
 		Host:     "localhost",
 		Port:     5432,
 		Username: "postgres",
