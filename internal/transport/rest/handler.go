@@ -57,6 +57,7 @@ func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 	user, err := h.usersService.GetByID(id)
 	if err != nil {
 		if errors.Is(err, domain.ErrUserNotFound) {
+			log.Println("getUserByID() StatusBadRequest error:", err)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -80,12 +81,14 @@ func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) createUser(w http.ResponseWriter, r *http.Request) {
 	reqBytes, err := io.ReadAll(r.Body)
 	if err != nil {
+		log.Println("createUser() readAll error:", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	var user domain.User
 	if err = json.Unmarshal(reqBytes, &user); err != nil {
+		log.Println("createUser() unmarshal error:", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -147,12 +150,14 @@ func (h *Handler) updateUser(w http.ResponseWriter, r *http.Request) {
 
 	reqBytes, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		log.Println("updateUser() readAll error:", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	var inp domain.User
 	if err = json.Unmarshal(reqBytes, &inp); err != nil {
+		log.Println("updateUser() unmarshal error:", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

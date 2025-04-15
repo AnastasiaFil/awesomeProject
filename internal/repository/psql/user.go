@@ -57,8 +57,25 @@ func (b *Users) Delete(id int64) error {
 }
 
 func (b *Users) Update(id int64, user domain.User) error {
-	_, err := b.db.Exec("UPDATE users SET name=$1, age=$2, sex=$3 WHERE id=$4",
-		user.Name, user.Age, user.Sex, id)
+	var user1 domain.User
+	err := b.db.QueryRow("SELECT id, name, age, sex FROM users WHERE id=$1", id).
+		Scan(&user1.ID, &user1.Name, &user1.Age, &user1.Sex)
+	if err != nil {
+		return err
+	}
+
+	if user.Name != "" {
+		user1.Name = user.Name
+	}
+	if user.Age != 0 {
+		user1.Age = user.Age
+	}
+	if user.Sex != "" {
+		user1.Sex = user.Sex
+	}
+
+	_, err = b.db.Exec("UPDATE users SET name=$1, age=$2, sex=$3 WHERE id=$4",
+		user1.Name, user1.Age, user1.Sex, id)
 
 	return err
 }

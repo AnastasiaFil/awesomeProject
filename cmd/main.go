@@ -5,9 +5,13 @@ import (
 	"awasomeProject/internal/service"
 	"awasomeProject/internal/transport/rest"
 	"awasomeProject/pkg/database"
+	"context"
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -27,9 +31,9 @@ func main() {
 	defer db.Close()
 
 	// init deps
-	booksRepo := psql.NewUsers(db)
-	booksService := service.NewUsers(booksRepo)
-	handler := rest.NewHandler(booksService)
+	usersRepo := psql.NewUsers(db)
+	usersService := service.NewUsers(usersRepo)
+	handler := rest.NewHandler(usersService)
 
 	// init & run server
 	srv := &http.Server{
@@ -37,9 +41,26 @@ func main() {
 		Handler: handler.InitRouter(),
 	}
 
-	log.Println("SERVER STARTED AT", time.Now().Format(time.RFC3339))
+	// Set up signal handling for graceful shutdown
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	if err := srv.ListenAndServe(); err != nil {
-		log.Fatal(err)
+	// Start a goroutine to handle shutdown
+	go func() {
+		sig := <-sigChan
+		log.Printf("Received signal: %v. Shutting down.", sig)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Printf("Server shutdown failed: %v", err)
+		} else {
+			log.Println("Server shut down gracefully")
+		}
+	}()
+
+	// Start the server
+	log.Println("SERVER STARTED AT", time.Now().Format(time.RFC3339))
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Fatalf("listen: %s\n", err)
 	}
 }
