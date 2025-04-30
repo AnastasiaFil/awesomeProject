@@ -1,11 +1,15 @@
 package main
 
 import (
-	"awasomeProject/internal/domain"
+	"awasomeProject/internal/config"
 	"awasomeProject/internal/repository/psql"
 	"awasomeProject/internal/service"
-	"awasomeProject/internal/transport/rest"
+	"awasomeProject/pkg/rest"
 	"context"
+	"database/sql"
+	"fmt"
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
@@ -16,15 +20,19 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file:", err)
+	}
+
+	var cfg config.Config
+	err = envconfig.Process("", &cfg)
+	if err != nil {
+		log.Fatal("Error processing envconfig:", err)
+	}
+
 	// init db
-	db, err := domain.NewPostgresConnection(domain.ConnectionInfo{
-		Host:     "localhost",
-		Port:     5432,
-		Username: "postgres",
-		DBName:   "postgres",
-		SSLMode:  "disable",
-		Password: "qwerty123",
-	})
+	db, err := NewPostgresConnection(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,4 +71,18 @@ func main() {
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("listen: %s\n", err)
 	}
+}
+
+func NewPostgresConnection(config config.Config) (*sql.DB, error) {
+	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=%s password=%s",
+		config.DBHost, config.DBPort, config.DBUsername, config.DBName, config.DBSSLMode, config.DBPassword))
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
