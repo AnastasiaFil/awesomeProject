@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "awasomeProject/docs"
 	"awasomeProject/internal/config"
 	"awasomeProject/internal/repository/psql"
 	"awasomeProject/internal/service"
@@ -11,6 +12,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	_ "github.com/lib/pq"
+	"github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 	"os"
@@ -42,11 +44,15 @@ func main() {
 	usersRepo := psql.NewUsers(db)
 	usersService := service.NewUsers(usersRepo)
 	handler := rest.NewHandler(usersService)
+	router := handler.InitRouter()
+
+	// Add Swagger UI route
+	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	// init & run server
 	srv := &http.Server{
 		Addr:    ":8080",
-		Handler: handler.InitRouter(),
+		Handler: router,
 	}
 
 	// Set up signal handling for graceful shutdown
@@ -67,7 +73,7 @@ func main() {
 	}()
 
 	// Start the server
-	log.Println("SERVER STARTED AT", time.Now().Format(time.RFC3339))
+	log.Println("Server starting on :8080")
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("listen: %s\n", err)
 	}

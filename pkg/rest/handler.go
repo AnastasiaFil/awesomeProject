@@ -46,6 +46,13 @@ func (h *Handler) InitRouter() *mux.Router {
 	return r
 }
 
+// @Summary Get a user by ID
+// @Description Get a user by their ID
+// @Tags users
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} domain.User
+// @Router /users/{id} [get]
 func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 	id, err := getIdFromRequest(r)
 	if err != nil {
@@ -78,6 +85,14 @@ func (h *Handler) getUserByID(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+// @Summary Create a new user
+// @Description Create a new user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body domain.User true "Create user"
+// @Success 201 {object} domain.User
+// @Router /users [post]
 func (h *Handler) createUser(w http.ResponseWriter, r *http.Request) {
 	reqBytes, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -103,6 +118,13 @@ func (h *Handler) createUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+// @Summary Delete a user
+// @Description Delete a user by their ID
+// @Tags users
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 204
+// @Router /users/{id} [delete]
 func (h *Handler) deleteUser(w http.ResponseWriter, r *http.Request) {
 	id, err := getIdFromRequest(r)
 	if err != nil {
@@ -121,6 +143,12 @@ func (h *Handler) deleteUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// @Summary Get all users
+// @Description Get a list of all users
+// @Tags users
+// @Produce json
+// @Success 200 {array} domain.User
+// @Router /users [get]
 func (h *Handler) getAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.usersService.GetAll()
 	if err != nil {
@@ -140,6 +168,15 @@ func (h *Handler) getAllUsers(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+// @Summary Update a user
+// @Description Update a user by their ID
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param user body domain.User true "Update user"
+// @Success 200 {object} domain.User
+// @Router /users/{id} [put]
 func (h *Handler) updateUser(w http.ResponseWriter, r *http.Request) {
 	id, err := getIdFromRequest(r)
 	if err != nil {
