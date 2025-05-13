@@ -1,4 +1,7 @@
 version: 0.2
+env:
+  variables:
+    GOCACHE: "${CODEBUILD_SRC_DIR}/go-build"
 phases:
   install:
     runtime-versions:
