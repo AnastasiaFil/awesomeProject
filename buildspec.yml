@@ -8,4 +8,4 @@ phases:
       - make build
 artifacts:
   files:
-    - main
+    - awesomeProject

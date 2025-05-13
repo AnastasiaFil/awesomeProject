@@ -1,5 +1,5 @@
 build:
-	go mod download && go build ./cmd/main.go
+	go mod download && go build -o awesomeProject ./cmd/main.go
 
 run: build
 	docker-compose up --remove-orphans
