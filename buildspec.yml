@@ -1,14 +1,15 @@
 version: 0.2
-env:
-  variables:
-    GOCACHE: "${CODEBUILD_SRC_DIR}/go-build"
 phases:
   install:
     runtime-versions:
       golang: 1.22
   build:
     commands:
+      - export GOCACHE=/tmp/gocache
       - make build
 artifacts:
   files:
-    - awesomeProject
+    - awesomeProject  # Your compiled binary
+    - appspec.yml     # CodeDeploy configuration file
+    - .env
+  discard-paths: yes
