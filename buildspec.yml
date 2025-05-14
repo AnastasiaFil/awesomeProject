@@ -12,4 +12,6 @@ artifacts:
     - awesomeProject  # Your compiled binary
     - appspec.yml     # CodeDeploy configuration file
     - .env
+    - scripts/after_install.sh
+    - scripts/start_server.sh
   discard-paths: yes
