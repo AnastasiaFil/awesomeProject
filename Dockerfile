@@ -17,7 +17,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o awesomeProject ./cmd/main.go
 FROM amazonlinux:2
 
 # Install necessary dependencies
-RUN yum update -y && yum install -y shadow-utils && yum clean all
+RUN yum update -y && yum install -y shadow-utils curl && yum clean all
 
 # Create directories for the application and logs
 RUN mkdir -p /usr/local/bin /var/log/awesomeProject
@@ -26,12 +26,12 @@ RUN chmod 755 /usr/local/bin /var/log/awesomeProject
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app/awesomeProject /usr/local/bin/awesomeProject
 
-# Copy the .env file and validate_service.sh script
+# Copy the .env file and start_server.sh script
 COPY .env /usr/local/bin/.env
-COPY scripts/validate_service.sh /usr/local/bin/start_server.sh
+COPY scripts/start_server.sh /usr/local/bin/start_server.sh
 
 # Set permissions
-RUN chmod +x /usr/local/bin/awesomeProject /usr/local/bin/validate_service.sh
+RUN chmod +x /usr/local/bin/awesomeProject /usr/local/bin/start_server.sh
 RUN chmod 600 /usr/local/bin/.env
 
 # Expose the application port

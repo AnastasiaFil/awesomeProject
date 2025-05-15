@@ -21,4 +21,10 @@ phases:
 artifacts:
   files:
     - imagedefinitions.json
+    - .env
+    - appspec.yml
+    - scripts/before_install.sh
+    - scripts/after_install.sh
+    - scripts/start_server.sh
+    - scripts/validate_service.sh
   discard-paths: yes
