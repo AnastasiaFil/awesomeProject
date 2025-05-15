@@ -1,18 +1,22 @@
 #!/bin/bash
-# Ensure the binary has correct permissions
+# Purpose: Perform post-installation tasks, such as setting permissions and verifying files
+
+# Set correct permissions for the application binary and scripts
 chmod +x /usr/local/bin/awesomeProject
+chmod +x /usr/local/bin/validate_service.sh
+chmod 600 /usr/local/bin/.env
 
-# Create necessary directories for logs
-mkdir -p /var/log/awesomeProject
-chown root:root /var/log/awesomeProject
-chmod 755 /var/log/awesomeProject
-
-# Copy .env file to the deployment directory (assuming it's included in artifacts)
-if [ -f /tmp/.env ]; then
-    cp /tmp/.env /usr/local/bin/.env
-    chown root:root /usr/local/bin/.env
-    chmod 600 /usr/local/bin/.env
+# Verify the application binary exists
+if [ ! -f /usr/local/bin/awesomeProject ]; then
+    echo "Error: Application binary not found!"
+    exit 1
 fi
 
-# Remove any stale lock files or temporary files
-rm -f /tmp/awesomeProject*.lock
+# Verify the validate_service.sh script exists
+if [ ! -f /usr/local/bin/validate_service.sh ]; then
+    echo "Error: start_server.sh script not found!"
+    exit 1
+fi
+
+echo "AfterInstall completed successfully"
+exit 0

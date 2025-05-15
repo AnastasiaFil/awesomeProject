@@ -1,14 +1,26 @@
-version: 0.1
-os: linux
-files:
-  - source: awesomeProject
-    destination: /usr/local/bin/awesomeProject
-hooks:
-  AfterInstall:
-    - location: scripts/after_install.sh
-      timeout: 300
-      runas: root
-  ApplicationStart:
-    - location: scripts/start_server.sh
-      timeout: 300
-      runas: root
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "arn:aws:ecs:eu-north-1:476683275943:task-definition/awesome-project-task:1"
+        LoadBalancerInfo:
+          ContainerName: "awesome-project-container"
+          ContainerPort: 8080
+Hooks:
+  - BeforeInstall:
+      Location: scripts/before_install.sh
+      Timeout: 300
+      Runas: root
+  - AfterInstall:
+      Location: scripts/after_install.sh
+      Timeout: 300
+      Runas: root
+  - ApplicationStart:
+      Location: scripts/validate_service.sh
+      Timeout: 300
+      Runas: root
+  - ValidateService:
+      Location: scripts/validate_service.sh
+      Timeout: 300
+      Runas: root
