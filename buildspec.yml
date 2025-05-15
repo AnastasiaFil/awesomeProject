@@ -1,17 +1,43 @@
+#version: 0.2
+#phases:
+#  install:
+#    runtime-versions:
+#      golang: 1.22
+#  build:
+#    commands:
+#      - export GOCACHE=/tmp/gocache
+#      - make build
+#artifacts:
+#  files:
+#    - awesomeProject  # Your compiled binary
+#    - appspec.yml     # CodeDeploy configuration file
+#    - .env
+#    - scripts/after_install.sh
+#    - scripts/start_server.sh
+#  discard-paths: yes
+#
+#
 version: 0.2
+
 phases:
-  install:
-    runtime-versions:
-      golang: 1.22
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 476683275943.dkr.ecr.eu-north-1.amazonaws.com
   build:
     commands:
-      - export GOCACHE=/tmp/gocache
-      - make build
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t awesome-project .
+      - docker tag awesome-project:latest 476683275943.dkr.ecr.eu-north-1.amazonaws.com/awesome-project:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 476683275943.dkr.ecr.eu-north-1.amazonaws.com/awesome-project:latest
+      - echo Writing image definitions file...
+      - printf '[{"name":"awesome-project-container","imageUri":"%s"}]' 476683275943.dkr.ecr.eu-north-1.amazonaws.com/awesome-project:latest > imagedefinitions.json
 artifacts:
   files:
-    - awesomeProject  # Your compiled binary
-    - appspec.yml     # CodeDeploy configuration file
-    - .env
-    - scripts/after_install.sh
-    - scripts/start_server.sh
+    - imagedefinitions.json
   discard-paths: yes
