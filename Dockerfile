@@ -11,7 +11,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go binary
-RUN CGO_ENABLED=0 GOOS=linux go build -o awesomeProject ./main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o awesomeProject ./cmd/main.go
 
 # Stage 2: Create the runtime image
 FROM amazonlinux:2
