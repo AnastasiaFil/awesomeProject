@@ -21,7 +21,6 @@ phases:
 artifacts:
   files:
     - imagedefinitions.json
-    - .env
     - appspec.yml
     - scripts/before_install.sh
     - scripts/after_install.sh
