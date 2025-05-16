@@ -26,12 +26,6 @@ RUN chmod 755 /usr/local/bin /var/log/awesomeProject
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app/awesomeProject /usr/local/bin/awesomeProject
 
-# Copy the start_server.sh script
-COPY scripts/start_server.sh /usr/local/bin/start_server.sh
-
-# Set permissions
-RUN chmod +x /usr/local/bin/awesomeProject /usr/local/bin/start_server.sh
-
 # Expose the application port
 EXPOSE 8080
 
