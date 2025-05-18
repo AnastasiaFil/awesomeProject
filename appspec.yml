@@ -3,7 +3,7 @@ Resources:
   - TargetService:
       Type: AWS::ECS::Service
       Properties:
-        TaskDefinition: "arn:aws:ecs:eu-north-1:476683275943:task-definition/awesome-project-task:2"
+        TaskDefinition: "arn:aws:ecs:eu-north-1:476683275943:task-definition/awesome-project-task"
         LoadBalancerInfo:
           ContainerName: "awesome-project-container"
           ContainerPort: 8080
