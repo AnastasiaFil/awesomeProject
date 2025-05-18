@@ -30,4 +30,4 @@ COPY --from=builder /app/awesomeProject /usr/local/bin/awesomeProject
 EXPOSE 8080
 
 # Command to run the application
-CMD ["/usr/local/bin/start_server.sh"]
+CMD ["/usr/local/bin/awesomeProject"]
