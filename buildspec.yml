@@ -9,14 +9,13 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t awesome-project .
+      - docker build --platform linux/amd64 -t awesome-project .
       - docker tag awesome-project:latest 476683275943.dkr.ecr.eu-north-1.amazonaws.com/awesome-project:latest
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push 476683275943.dkr.ecr.eu-north-1.amazonaws.com/awesome-project:latest
-      - echo Writing image definitions file...
       - printf '[{"name":"awesome-project-container","imageUri":"%s"}]' 476683275943.dkr.ecr.eu-north-1.amazonaws.com/awesome-project:latest > imagedefinitions.json
 artifacts:
   files:
